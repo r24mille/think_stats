@@ -5,9 +5,33 @@ Created on Apr 15, 2014
 '''
 
 import math
+import operator
 
 import first
 import thinkstats
+import Pmf
+
+def AllModes(hist):
+    """
+    Returns a list of value-frequency pairs in descending order
+    
+    Arguments:
+    hist -- a Hist object
+    """
+    
+    getfreq = operator.itemgetter(1)
+    return sorted(hist.Items(), key=getfreq, reverse=True)
+
+def Mode(hist):
+    """Returns the mode of a sequence
+    
+    Arguments:
+    t -- a Hist object
+    """
+    
+    max_freq = hist.MaxLike()
+    index_maxfreq = hist.Freqs().index(max_freq)
+    return hist.Values()[index_maxfreq]
 
 
 def Pumpkin(weights):
@@ -52,6 +76,11 @@ def main():
     print "Difference of mean first child gestation and other child "\
           "gestation is", (firsts.mu - others.mu), "weeks. It is much less "\
           "than the groups' standard deviations."
+    
+    # Exercise 2.3
+    print "Mode of first child gestation is", Mode(Pmf.MakeHistFromList(firsts.lengths)), "weeks"
+    print "Mode of other child gestation is", Mode(Pmf.MakeHistFromList(others.lengths)), "weeks"
+    print AllModes(Pmf.MakeHistFromList(firsts.lengths))
     
 if __name__ == "__main__":
     main()
