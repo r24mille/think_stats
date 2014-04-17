@@ -8,7 +8,7 @@ import math
 import operator
 
 import Pmf
-import first
+import chapter_one.first_ans as first
 import matplotlib.pyplot as pyplot
 import thinkstats
 

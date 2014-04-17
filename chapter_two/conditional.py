@@ -4,7 +4,7 @@ Created on Apr 17, 2014
 @author: r24mille
 '''
 import Pmf
-import first
+import chapter_one.first_ans as first
 import matplotlib.pyplot as pyplot
 import myplot
 
@@ -48,9 +48,9 @@ def main():
         others_cond_prob[week] = ConditionalProb(others_pmf, week)
         
     # Plot results
-    myplot.Plot(firsts_cond_prob.keys(), firsts_cond_prob.values(), 
+    myplot.Plot(firsts_cond_prob.keys(), firsts_cond_prob.values(),
                 label="first babies")
-    myplot.Plot(others_cond_prob.keys(), others_cond_prob.values(), 
+    myplot.Plot(others_cond_prob.keys(), others_cond_prob.values(),
                 label="others")
     myplot.Show()
 

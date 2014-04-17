@@ -5,7 +5,7 @@ Created on Apr 17, 2014
 '''
 import Pmf
 
-import first
+import chapter_one.first_ans as first
 
 def ProbForRange(pmf, start, end):
     """Returns the probability that a baby will be born in a given range of 
