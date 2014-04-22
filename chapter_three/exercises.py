@@ -4,6 +4,7 @@ Created on Apr 17, 2014
 @author: r24mille
 '''
 import heapq
+import random
 
 import Cdf
 from chapter_one import first_ans as first
@@ -24,7 +25,7 @@ def ConvertTimeToSeconds(time):
         h, m, s = [int(x) for x in time.split(':')]
     except ValueError:
         m, s = [int(x) for x in time.split(':')]
-    secs = h*3600 + m*60 + s
+    secs = h * 3600 + m * 60 + s
     return secs
 
 
@@ -34,8 +35,26 @@ def GetNets(results, column=4):
     for t in results:
         pace = t[column].translate(None, '*')
         secs = ConvertTimeToSeconds(pace)
-        nets.append(secs/60.0)
+        nets.append(secs / 60.0)
     return nets
+
+
+def Interquartile(cdf):
+    """Returns the interquartile range of a CDF
+    
+    Arguments:
+    cdf -- cumulative distribution function
+    """
+    return cdf.Percentile(75) - cdf.Percentile(25)
+
+
+def Median(cdf):
+    """Find the median value of a cumulative distribution function
+    
+    Arguments:
+    cdf -- cumulative distribution function
+    """
+    return cdf.Percentile(50)
 
 
 def Percentile(scores, percentile_rank):
@@ -118,6 +137,19 @@ def RecordWeightsAsList(table):
     return weights_oz
 
 
+def Sample(cdf, n=1000):
+    """Returns a list of n values chosen at random from cdf
+    
+    Arguments:
+    cdf -- the cumulative distribution function to pull values from randomly
+    n -- the number of values to pull creating a sample
+    """
+    sample = []
+    for i in range(1, n):
+        sample.append(cdf.Percentile(random.random() * 100.0))
+    return sample
+
+
 def StuObsPmf(d):
     """Returns a PMF of student class size observations.
     
@@ -157,19 +189,15 @@ def main():
     # Internal Pmf.Normalize alters dict object, use a copy
     cl_size_pmf = Pmf.MakePmfFromDict(cl_size_counts.copy()) 
     print "Mean from the dean's perspective", cl_size_pmf.Mean()
-    
     # Sample 500 students
     cl_size_obs_pmf = StuObsPmf(cl_size_counts)
     print "Mean from student observations", cl_size_obs_pmf.Mean()
-    
     # Unbias the observed sample
     cl_size_obs_unbias_pmf = UnbiasPmf(cl_size_obs_pmf)
     print "Mean from unbiased student observations", cl_size_obs_unbias_pmf.Mean()
     
-    
     # Exercise 3.2
     # ...maybe later
-    
     
     # Exercise 3.3 and 3.4
     scores = [55, 66, 77, 88, 99]
@@ -179,7 +207,6 @@ def main():
     the_score = Percentile(scores, percentile_rank)
     print "Score found using percentile rank", the_score
     
-    
     # Exercise 3.5, commented out to spare coolrunning.com
     relay_results = relay.ReadResults()
     speeds = relay.GetSpeeds(relay_results)
@@ -188,7 +215,6 @@ def main():
     # myplot.Show(title='CDF of running speed',
     #            xlabel='speed (mph)',
     #            ylabel='percentile')
-    
     
     # Exercise 3.6
     table, firsts, others = first.MakeTables()
@@ -206,14 +232,12 @@ def main():
     #             xlabel="weight (ounces)",
     #             yplabel="percentile")
     
-    
     # Exercise 3.7
     # The birth weight CDF for an academic class would look more like the 
     # 'others' birth weight CDF since 'others' would be oversampled in any 
     # population. This was demonstrated by firsts.n and otheres.n in earlier 
     # chapters. I would expect more than half to be over the median birth 
     # weight due to this skew. The curve would be flattened due to this skew.
-    
     
     # Exercise 3.8
     m4049, m5059, f2039 = PartitionDivisions(relay_results)
@@ -224,10 +248,37 @@ def main():
     print "Allen's time", allen_mins, "minutes"
     allen_percentile = m4049_cdf.Prob(allen_mins) * 100
     print "Allen's original percentile", allen_percentile
-    print "Allen's 50-59 target time", m5059_cdf.Percentile(allen_percentile),\
+    print "Allen's 50-59 target time", m5059_cdf.Percentile(allen_percentile), \
           "minutes"
-    print "Rival's target time", f2039_cdf.Percentile(allen_percentile),\
+    print "Rival's target time", f2039_cdf.Percentile(allen_percentile), \
           "minutes"
+          
+    # Exercise 3.9
+    sample = Sample(firsts_wgt_cdf)
+    sample_cdf = Cdf.MakeCdfFromList(sample, "sample_wgts")
+    # myplot.Cdf(firsts_wgt_cdf)
+    # myplot.Cdf(sample_cdf)
+    # myplot.Show(title="CDF of birth weights",
+    #             xlabel="weight (ounces)",
+    #             yplabel="percentile")
+    
+    # Exercise 3.10
+    rnd_sample = []
+    for i in range(1, 1000):
+        rnd_sample.append(random.random())
+    rnd_cdf = Cdf.MakeCdfFromList(rnd_sample)
+    # myplot.Cdf(rnd_cdf)
+    # myplot.Show(title="Random Sample")
+    
+    # Exercise 3.11
+    print "25th percentile of first pregnancy birth weights", \
+          firsts_wgt_cdf.Percentile(25)
+    print "Median of first pregnancy birth weights", Median(firsts_wgt_cdf)
+    print "75th percentile of first pregnancy birth weights", \
+          firsts_wgt_cdf.Percentile(75)
+    print "Interquartile range of first pregnancy birth weights", \
+          Interquartile(firsts_wgt_cdf)
+    
 
 if __name__ == "__main__":
     main()
