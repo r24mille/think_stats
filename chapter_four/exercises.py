@@ -43,7 +43,8 @@ def Sample(n=6, mu=0, sigma=1):
     """
     sample = []
     for i in range(0, n):
-        sample.append(random.normalvariate(mu=mu, sigma=sigma))
+        sample.append(random.normalvariate(mu=0, sigma=1))
+    sample.sort()
     return sample
 
 def Samples(k=1000):
@@ -150,9 +151,12 @@ def main():
     # myplot.Show(title="Empirical and Modeled Gestation Lengths")
     
     # Exercise 4.9
-    samples = Samples()
-    z_samples = zip(samples)
-    print "Zipped length", len(z_samples)
+    samples = Samples(k=1000)
+    z_samples = zip(*samples)
+    # print "zipped samples", z_samples
+    # for s in z_samples:
+    #     print "s", s
+    print "Zipped means", [ thinkstats.Mean(s) for s in z_samples ]
 
 if __name__ == '__main__':
     main()
