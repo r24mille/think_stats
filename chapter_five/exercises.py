@@ -44,6 +44,23 @@ def IgnorantMonty():
         # Monty selecte the car and player looses
         return False
     
+    
+def PartitionBySex(respondents):
+    """Partitions respondents from brfss survey into male, female lists of 
+    records
+    
+    Arguments:
+    respondents -- brfss.Respondents object
+    """
+    males = []
+    females = []
+    for rec in respondents.records:
+        if rec.sex == 1:
+            males.append(rec)
+        elif rec.sex == 2:
+            females.append(rec)
+    return males, females
+    
 
 def Poincare(selected=5, sz=100, mu=950.0, sigma=50.0):
     """Simulates a baker who chooses n loaves from a distribution with mean 
@@ -149,9 +166,25 @@ def main():
     
     # Exercise 5.7
     respondents = brfss.Respondents()
+    respondents.ReadRecords(data_dir="../chapter_four")
     respondents.Recode()
-    for rec in respondents.records:
-        print rec.weight2
+    men, women = PartitionBySex(respondents)
+    men_heights = [rec.htm3 for rec in men if rec.htm3 != "NA"]
+    women_heights = [rec.htm3 for rec in women if rec.htm3 != "NA"]
+    male_height_cdf = Cdf.MakeCdfFromList(men_heights, "Male Heights")
+    female_height_cdf = Cdf.MakeCdfFromList(women_heights, "Female Heights")
+    female_over_male_mean = female_height_cdf.Prob(numpy.mean(men_heights))
+    print "Percentile of the male mean in female CDF", female_over_male_mean
+    dance_couples = 5000
+    male_dancer_heights = random.sample(men_heights, dance_couples)
+    female_dancer_heights = random.sample(women_heights, dance_couples)
+    women_taller = 0
+    for i in range (0, dance_couples):
+        if female_dancer_heights[i] > male_dancer_heights[i]:
+            women_taller += 1
+    print "Women taller from sampling", women_taller / float(dance_couples)
+    
+        
     
 
 if __name__ == '__main__':
