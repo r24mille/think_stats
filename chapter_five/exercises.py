@@ -173,9 +173,7 @@ def main():
     women_heights = [rec.htm3 for rec in women if rec.htm3 != "NA"]
     male_height_cdf = Cdf.MakeCdfFromList(men_heights, "Male Heights")
     female_height_cdf = Cdf.MakeCdfFromList(women_heights, "Female Heights")
-    female_over_male_mean = female_height_cdf.Prob(numpy.mean(men_heights))
-    print "Percentile of the male mean in female CDF", female_over_male_mean
-    dance_couples = 5000
+    dance_couples = 100
     male_dancer_heights = random.sample(men_heights, dance_couples)
     female_dancer_heights = random.sample(women_heights, dance_couples)
     women_taller = 0
@@ -184,7 +182,12 @@ def main():
             women_taller += 1
     print "Women taller from sampling", women_taller / float(dance_couples)
     
-        
+    # Exercise 5.8
+    print "Probability of at least one six", \
+          prob_six + prob_six - (prob_six**2)
+    
+    # Exercise 5.9
+    # P(A or B) - P(A and B | A or B)
     
 
 if __name__ == '__main__':
